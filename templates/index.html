@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+  <h1>Index</h1>
+    {% if name %}
+      Welcome {{name}}, on my awesome homepage.
+    {% else %}
+      Welcome on my awesome homepage.
+    {% endif %}
+{% endblock %}
