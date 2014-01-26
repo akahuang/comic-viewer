@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     {% block head %}
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css" />
     <title>{% block title %}{% endblock %}</title>
     {% endblock %}
@@ -11,7 +12,9 @@
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">
         {% block footer %}
+        <hr>
         &copy; Copyright 2013 by flarehunter.</a>.
         {% endblock %}
     </div>
 </body>
+</html>
