@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*
 
 import sys
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template
 from Forms import SearchBarForm
 
 app = Flask(__name__)
@@ -14,10 +14,8 @@ def index():
     form = SearchBarForm()
     return render_template('index.html', form=form)
 
-@app.route('/result/', methods=['GET', 'POST'])
+@app.route('/result/', methods=['GET'])
 def result():
-    if request.method == 'POST':
-        return redirect('/')
     query = request.args.get('query', '')
     form = SearchBarForm(query=query)
     return render_template('result.html', form=form, query=query)
