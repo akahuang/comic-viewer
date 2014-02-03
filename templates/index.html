@@ -2,8 +2,7 @@
 {% block title %}Index{% endblock %}
 {% block content %}
     <h1>Search Bar</h1>
-    <form method="POST" action="/">
-        {{ form.csrf_token }}
+    <form method="GET" action="/result/">
         {{ form.query.label }} {{ form.query(size=20) }}
         <input type="submit" value="Submit">
     </form>
