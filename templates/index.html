@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+    <h1>Comic Viewer</h1>
+    <center>
+    <form method="GET" action="/result/">
+        {{ form.query.label }} {{ form.query }}
+        <input type="submit" value="Submit">
+    </form>
+    </center>
+{% endblock %}

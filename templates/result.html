@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+    {{ super() }}
+    <hr>
+    {% if result.ok %}
+        <center>
+        {% for comic_url in result.urls %}
+            <img src="{{ comic_url }}">
+        {% endfor %}
+        </center>
+    {% else %}
+        {% result.error_msg %}
+    {% endif %}
+{% endblock %}
