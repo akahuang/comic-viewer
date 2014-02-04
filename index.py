@@ -20,7 +20,7 @@ def result():
     query = request.args.get('query', '')
     form = SearchBarForm(query=query)
     result = parse_html(query)
-    print result
+    print '---- RESULT:' + str(result) + '----'
     return render_template('result.html', form=form, result=result)
 
 def main(argv=sys.argv[:]):
