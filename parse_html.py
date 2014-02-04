@@ -5,13 +5,16 @@
 import sys
 import re
 import requests
+from utils import retry_requests
 import lxml.html as HTML
 
 def parse_html(url):
     '''The delegator function.'''
-    r = requests.get(url)
-    if r.status_code != requests.codes.ok:
-        return QueryResult(False, 'Error:{0}{1}'.format(r.status_code, r.reason))
+    r = retry_requests(url)
+    if r is None:
+        return QueryResult(False, err='Internal Error')
+    if r.status_code != 200:
+        return QueryResult(False, err='Error:{0}{1}'.format(r.status_code, r.reason))
 
     if 'sfacg' in url:
         return parse_sfacg(r.text)
@@ -26,9 +29,11 @@ def parse_sfacg(text):
     js_url = BASE_URL + filter(lambda x:x[-3:]=='.js', js_list)[0]
 
     # Get the image list
-    r = requests.get(js_url)
+    r = retry_requests(js_url)
+    if r is None:
+        return QueryResult(False, err='Internal Error')
     if r.status_code != requests.codes.ok:
-        return QueryResult(False, 'Error:{0}{1}'.format(r.status_code, r.reason))
+        return QueryResult(False, err='Error:{0}{1}'.format(r.status_code, r.reason))
     re_pattern = 'picAy\[\d+\] = "(.*?)"'
     urls = re.findall(re_pattern, r.text.encode('utf8'))
 
@@ -48,10 +53,11 @@ class QueryResult():
     def __str__(self):
         if self.ok is True:
             return 'Status: OK ' + str(self.urls)
-        return 'Status: FAIL ' + self.error_msg
+        return 'Status: FAIL "{0}"'.format(self.error_msg)
 
 def main(argv=sys.argv[:]):
     url = 'http://comic.sfacg.com/HTML/WDMM/001/'
+    url = 'lala'
     print parse_html(url)
     return 0
 
