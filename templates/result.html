@@ -3,5 +3,13 @@
 {% block content %}
     {{ super() }}
     <hr>
-    query string is: {{ query }}
+    {% if result.ok %}
+        <center>
+        {% for comic_url in result.urls %}
+            <img src="{{ comic_url }}">
+        {% endfor %}
+        </center>
+    {% else %}
+        {% result.error_msg %}
+    {% endif %}
 {% endblock %}
