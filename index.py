@@ -4,6 +4,7 @@
 import sys
 from flask import Flask, request, render_template
 from Forms import SearchBarForm
+from parse_html import parse_html
 
 app = Flask(__name__)
 app.debug = True
@@ -18,7 +19,9 @@ def index():
 def result():
     query = request.args.get('query', '')
     form = SearchBarForm(query=query)
-    return render_template('result.html', form=form, query=query)
+    result = parse_html(query)
+    print result
+    return render_template('result.html', form=form, result=result)
 
 def main(argv=sys.argv[:]):
     app.run()
