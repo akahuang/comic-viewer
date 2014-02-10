@@ -4,21 +4,21 @@
 
 import sys
 import re
-import requests
 from utils import retry_requests
 import lxml.html as HTML
 
 def parse_html(url):
     '''The delegator function.'''
-    r = retry_requests(url)
-    if r is None:
-        return QueryResult(False, err='Internal Error')
-    if r.status_code != 200:
-        return QueryResult(False, err='Error:{0}{1}'.format(r.status_code, r.reason))
+    try:
+        r = retry_requests(url)
+        if r.ok is False:
+            return QueryResult(False, err=r.error_msg)
 
-    if 'sfacg' in url:
-        return parse_sfacg(r.text)
-    return QueryResult(False, 'The url is not supported comic website')
+        if 'sfacg' in url:
+            return parse_sfacg(r.text)
+        return QueryResult(False, err='The url is not supported comic website')
+    except Exception as e:
+        return QueryResult(False, err='Error occurs...' + e.__doc__)
 
 def parse_sfacg(text):
     BASE_URL = 'http://comic.sfacg.com'
@@ -30,10 +30,8 @@ def parse_sfacg(text):
 
     # Get the image list
     r = retry_requests(js_url)
-    if r is None:
-        return QueryResult(False, err='Internal Error')
-    if r.status_code != requests.codes.ok:
-        return QueryResult(False, err='Error:{0}{1}'.format(r.status_code, r.reason))
+    if r.ok is False:
+        return QueryResult(False, err=r.error_msg)
     re_pattern = 'picAy\[\d+\] = "(.*?)"'
     urls = re.findall(re_pattern, r.text.encode('utf8'))
 
@@ -56,8 +54,7 @@ class QueryResult():
         return 'Status: FAIL "{0}"'.format(self.error_msg)
 
 def main(argv=sys.argv[:]):
-    url = 'http://comic.sfacg.com/HTML/WDMM/001/'
-    url = 'lala'
+    url = 'http://comic.sfacg.com/HTML/WDMM/00111/'
     print parse_html(url)
     return 0
 
