@@ -24,9 +24,12 @@ def parse_sfacg(text):
     BASE_URL = 'http://comic.sfacg.com'
 
     # Find the javascript
-    root = HTML.document_fromstring(text)
-    js_list = root.xpath('head/script/@src')
-    js_url = BASE_URL + filter(lambda x:x[-3:]=='.js', js_list)[0]
+    try:
+        root = HTML.document_fromstring(text)
+        js_list = root.xpath('head/script/@src')
+        js_url = BASE_URL + filter(lambda x:x[-3:]=='.js', js_list)[0]
+    except IndexError:
+        return QueryResult(False, err='javascript file is not found')
 
     # Get the image list
     r = retry_requests(js_url)
