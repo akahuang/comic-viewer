@@ -66,8 +66,6 @@ def parse_sfacg(text):
         'prev_url' : prev_url,
         'next_url' : next_url,
     }
-    print type(name), type(prev_url), type(next_url)
-    print (name), (prev_url), (next_url)
     return QueryResult(True, data=comic_data)
 
 

@@ -25,3 +25,14 @@ class TestCase(unittest.TestCase):
         r = parse_html.parse_html(fail_url)
         self.assertFalse(r.ok)
 
+    def test_parse_sfacg_head(self):
+        head_url = 'http://comic.sfacg.com/HTML/XFGJ/001j/'
+        r = parse_html.parse_html(head_url)
+        self.assertIsNone(r.data['prev_url'])
+        self.assertIsNotNone(r.data['next_url'])
+
+    def test_parse_sfacg_name(self):
+        ok_url = 'http://comic.sfacg.com/HTML/XFGJ/001j/'
+        r = parse_html.parse_html(ok_url)
+        self.assertEqual(unicode, type(r.data['name']))
+
