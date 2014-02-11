@@ -1,14 +1,19 @@
 {% extends "index.html" %}
-{% block title %}Index{% endblock %}
 {% block content %}
     {{ super() }}
     <hr>
     {% if result.ok %}
-        <center>
-        {% for comic_url in result.urls %}
+        {{ result.data['name'] }}
+        {% for comic_url in result.data['urls'] %}
             <img src="{{ comic_url }}">
         {% endfor %}
-        </center>
+        {% if result.data['prev_url'] is not none %}
+            <a href="/result/?{{ result.data['prev_url'] }}">Previous Chapter</a>
+        {% endif %}
+        {% if result.data['next_url'] is not none %}
+            <a href="/result/?{{ result.data['next_url'] }}">Next Chapter</a>
+        {% endif %}
+
     {% else %}
         {{ result.error_msg }}
     {% endif %}
