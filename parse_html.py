@@ -11,14 +11,21 @@ from utils import retry_requests
 
 def parse_html(url):
     '''The delegator function.'''
+
+    # Determine the comic website
+    if 'sfacg' in url:
+        parse_func = parse_sfacg
+    elif 'comicvip' in url:
+        parse_func = parse_8comic
+    else:
+        return QueryResult(False, err='The url is not supported comic website')
+
+    # Parse the html
     try:
         r = retry_requests(url)
         if r.ok is False:
             return QueryResult(False, err=r.error_msg)
-
-        if 'sfacg' in url:
-            return parse_sfacg(r.text)
-        return QueryResult(False, err='The url is not supported comic website')
+        return parse_func(r.text)
     except Exception as e:
         traceback.print_exc()
         return QueryResult(False, err='Error occurs...' + e.__doc__)
@@ -68,6 +75,38 @@ def parse_sfacg(text):
     }
     return QueryResult(True, data=comic_data)
 
+def parse_8comic(text):
+    # Retrive the importent variable
+    chs_pattern = 'var chs=(\d*?);'
+    chs = re.findall(chs_pattern, text)[0]
+    item_id_pattern = 'var itemid=(\d*?);'
+    item_id = re.findall(item_id_pattern, text)[0]
+    allcodes_pattern = 'var allcodes="(.*?)";'
+    allcodes  = re.findall(allcodes_pattern, text)[0]
+    links = allcodes.split('|')
+    for link in links:
+        num, sid, did, pages, code = link.split(' ')
+        if num == chs:
+            break
+
+    # Generate comic url list
+    urls = []
+    for page in range(1, int(pages) + 1):
+        m = ((page-1)/10)%10 + (((page-1)%10)*3)
+        img = '%03d_%s' % (page, code[m:m+3])
+        url = "http://img%s.8comic.com/%s/%s/%s/%s.jpg" % (sid, did, item_id, num, img)
+        urls.append(url)
+
+    comic_data = {
+        'urls' : urls,
+        'name' : 'Not Implemented..', #name.decode('utf8'),
+        'prev_url' : None,
+        'next_url' : None,
+    }
+    return QueryResult(True, data=comic_data)
+
+#   name_pattern = '<title>(.*?)</title>'
+#   name = re.findall(name_pattern, text)[0]
 
 
 class QueryResult():
