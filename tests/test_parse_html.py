@@ -36,3 +36,7 @@ class TestCase(unittest.TestCase):
         r = parse_html.parse_html(ok_url)
         self.assertEqual(unicode, type(r.data['name']))
 
+    def test_parse_8comic_ok(self):
+        ok_url = 'http://new.comicvip.com/show/cool-7340.html?ch=54'
+        r = parse_html.parse_html(ok_url)
+        self.assertTrue(r.ok)
