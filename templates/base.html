@@ -2,23 +2,12 @@
 <html lang="en">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    {% block head %}
     <meta charset="utf-8" />
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <title>{% block title %}{% endblock %}</title>
-    {% endblock %}
+    <title>{% block title %}{% endblock %} Comic Viewer</title>
 </head>
 <body>
-    <div id="content">
-        <center>
-        {% block content %}{% endblock %}
-        </center>
-    </div>
-    <div id="footer">
-        {% block footer %}
-        <hr>
-        &copy; Copyright 2013 by flarehunter.</a>.
-        {% endblock %}
-    </div>
+    {% block body %}{% endblock %}
 </body>
 </html>

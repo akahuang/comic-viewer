@@ -1,9 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Comic Viewer{% endblock %}
-{% block content %}
-    <h1>Comic Viewer</h1>
-    <form method="GET" action="/result/">
-        {{ form.query.label }} {{ form.query }}
-        <input type="submit" value="Submit">
-    </form>
+{% block body %}
+    <div class="vertical-center">
+        <h1>Comic Viewer</h1>
+        <center>
+            <form class="pure-form pure-form-stacked" method="GET" action="/result/">
+                <input class="pure-u-3-4" id="query" name="query" type="text" value="" placeholder="Enter URL Here" >
+                <input type="submit" class="pure-button " value="Submit">
+            </form>
+        </center>
+    </div>
+
+    <div class="banner fixed-foot" id="footer">
+        &copy; Copyright 2014 by flarehunter
+    </div>
 {% endblock %}
