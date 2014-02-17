@@ -1,1 +1,54 @@
-@import url(http://cdn-theme.logdown.io/cleanpress/stylesheets/screen.css);
+body {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+/***** Banner, including header and footer *****/
+.banner {
+    left: 0em;
+    width: 100%;
+    background-color: #eee;
+    padding: 1em 0em 1em 0em;
+    outline: #ddd solid thin;
+}
+
+.fixed-foot {
+    position: fixed;
+    bottom: 0em;
+}
+
+#header {
+    color: #555;
+    margin-bottom: 1em;
+}
+
+#footer {
+    color: #888;
+    font-size: 0.9em;
+    margin-top: 1em;
+}
+
+/***** center *****/
+.vertical-center {
+    width: 100%;
+    position: absolute;
+    top:50%;
+    height:400px;
+    margin-top:-200px;
+}
+
+/***** Little title at the left of the header ******/
+.little-title {
+    font-size:20px;
+    height:30px;
+    line-height:30px;
+}
+
+/***** The comic picture *****/
+#content img {
+    display: block;
+    max-width: 95%;
+    margin: auto;
+}
