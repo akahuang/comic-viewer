@@ -25,23 +25,18 @@
     </div>
 
     <div id="content">
-        {% if result.ok %}
-            {% for comic_url in result.data['urls'] %}
-                <img src="{{ comic_url }}">
-            {% endfor %}
-            <h3>
-            {% if result.data['prev_url'] is not none %}
-                <a href="/result/?{{ result.data['prev_url'] }}">Previous Chapter</a>
-            {% endif %}
-            {% if result.data['next_url'] is not none %}
-                <a href="/result/?{{ result.data['next_url'] }}">Next Chapter</a>
-            {% endif %}
-            </h3>
+        {% for comic_url in result.data['urls'] %}
+            <img src="{{ comic_url }}">
+        {% endfor %}
 
-        {% else %}
-            <h2>Error!!</h2>
-            {{ result.error_msg }}
+        <h3>
+        {% if result.data['prev_url'] is not none %}
+            <a href="/result/?{{ result.data['prev_url'] }}">Previous Chapter</a>
         {% endif %}
+        {% if result.data['next_url'] is not none %}
+            <a href="/result/?{{ result.data['next_url'] }}">Next Chapter</a>
+        {% endif %}
+        </h3>
     </div>
 
     <div class="banner" id="footer">

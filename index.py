@@ -17,7 +17,20 @@ def index():
 def result():
     query = request.args.get('query', '')
     result = parse_html(query)
-    return render_template('result.html', query=query, result=result)
+    if result.ok:
+        return render_template('result.html', query=query, result=result)
+    else:
+        return render_template('error.html', query=query, error_msg=result.error_msg)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html', error_msg='Page not found'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('error.html', error_msg='Internal Server Error'), 500
+
 
 def main(argv=sys.argv[:]):
     app.run()
