@@ -1,8 +1,6 @@
+{% import 'macros.html' as macros %}
 {% extends "base.html" %}
 {% block body %}
     {% block main_content %}{% endblock %}
-    <div class="banner fixed-foot" id="footer">
-        &copy; Copyright 2014 by flarehunter. Powered by <a href="http://flask.pocoo.org/">Flask</a>.<br>
-        Source code in <a href="https://github.com/akahuang/comic-viewer">Github</a>.
-    </div>
+    {{ macros.footer(true) }}
 {% endblock %}
