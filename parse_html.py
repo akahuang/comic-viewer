@@ -17,6 +17,8 @@ def parse_html(url):
         parse_func = parse_sfacg
     elif 'comicvip' in url:
         parse_func = parse_8comic
+    elif '99770' in url:
+        parse_func = parse_99770
     else:
         return QueryResult(False, err='The url is not supported comic website')
 
@@ -117,7 +119,7 @@ def parse_8comic(r):
 
     comic_data = {
         'urls' : urls,
-        'name' : 'Not Implemented..', #name.decode('utf8'),
+        'name' : 'Untitled',
         'prev_url' : prev_url,
         'next_url' : next_url,
     }
@@ -126,6 +128,23 @@ def parse_8comic(r):
 #   name_pattern = '<title>(.*?)</title>'
 #   name = re.findall(name_pattern, text)[0]
 
+def parse_99770(r):
+    BASE_DOMAINS = 'http://58.215.241.39:9728/dm01/|http://58.215.241.39:9728/dm02/|http://58.215.241.39:9728/dm03/|http://58.215.241.206:9728/dm04/|http://58.215.241.39:9728/dm05/|http://58.215.241.39:9728/dm06/|http://58.215.241.39:9728/dm07/|http://58.215.241.39:9728/dm08/|http://58.215.241.206:9728/dm09/|http://58.215.241.39:9728/dm10/|http://58.215.241.39:9728/dm11/|http://58.215.241.206:9728/dm12/|http://58.215.241.39:9728/dm13/|http://173.231.57.238/dm14/|http://58.215.241.206:9728/dm15/|http://142.4.34.102/dm16/'.split('|')
+    text = r.text
+
+    urls_pattern = 'var sFiles="(.*?)";'
+    urls = re.findall(urls_pattern, text)[0].split('|')
+    spath_pattern = 'var sPath="(\d*)"'
+    spath = int(re.findall(spath_pattern, text)[0]) - 1
+    urls = [BASE_DOMAINS[spath] + url for url in urls]
+
+    comic_data = {
+        'urls' : urls,
+        'name' : 'untitled',
+        'prev_url' : None,
+        'next_url' : None,
+    }
+    return QueryResult(True, data=comic_data)
 
 class QueryResult():
     """The object returned by parse_html function."""
@@ -147,8 +166,9 @@ class QueryResult():
         return 'Status: FAIL "{0}"'.format(self.error_msg)
 
 def main(argv=sys.argv[:]):
-    url = 'http://comic.sfacg.com/HTML/WDMM/001/'
-    url = 'http://new.comicvip.com/show/cool-7340.html?ch=23'
+#   url = 'http://comic.sfacg.com/HTML/WDMM/001/'
+#   url = 'http://new.comicvip.com/show/cool-7340.html?ch=23'
+    url = 'http://mh.99770.cc/comic/6643/141228/'
     print parse_html(url)
     return 0
 

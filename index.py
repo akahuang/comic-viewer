@@ -17,7 +17,6 @@ def index():
 def result():
     query = request.args.get('query', '')
     result = parse_html(query)
-    print '---- RESULT:' + str(result) + '----'
     return render_template('result.html', query=query, result=result)
 
 def main(argv=sys.argv[:]):
