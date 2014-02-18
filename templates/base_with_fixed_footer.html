@@ -1,0 +1,6 @@
+{% import 'macros.html' as macros %}
+{% extends "base.html" %}
+{% block body %}
+    {% block main_content %}{% endblock %}
+    {{ macros.footer(true) }}
+{% endblock %}

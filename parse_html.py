@@ -20,7 +20,10 @@ def parse_html(url):
     elif '99770' in url:
         parse_func = parse_99770
     else:
-        return QueryResult(False, err='The url is not supported comic website')
+        error_msg = '''
+            The url is not supported comic website.
+            Now the supported websites are sfacg, 8comic, and 99770.'''
+        return QueryResult(False, err=error_msg)
 
     # Parse the html
     try:
