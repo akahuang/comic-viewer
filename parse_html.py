@@ -27,6 +27,38 @@ def parse_html(url):
 
     return parse_func(url)
 
+
+class ComicSiteParser(object):
+    """Base class of parser """
+    def __init__(self):
+        self.urls = []
+        self.name = u''
+        self.prev_url = None
+        self.next_url = None
+
+    def _request_data(self, query_url):
+        '''Request the content of query_url and return the status'''
+        self.url_request = retry_requests(query_url)
+        return self.url_request.ok
+
+    def _parse_data(self):
+        pass
+
+    def parse_url(self, url):
+        '''Parse the url and return the comic list.'''
+        if not self._request_data(url):
+            return QueryResult(False, err=self.url_request.error_msg)
+        self._parse_data()
+        comic_data = {
+            'urls' : self.urls,
+            'name' : self.name.decode('utf8'),
+            'prev_url' : self.prev_url,
+            'next_url' : self.next_url,
+        }
+        return QueryResult(True, data=comic_data)
+
+
+
 def parse_sfacg(url):
     # Parse the html
     r = retry_requests(url)
