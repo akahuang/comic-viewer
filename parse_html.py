@@ -4,7 +4,7 @@
 
 import sys
 import re
-import traceback
+from flask import session
 from urllib import urlencode
 import lxml.html as HTML
 from utils import retry_requests
@@ -25,17 +25,14 @@ def parse_html(url):
             Now the supported websites are sfacg, 8comic, and 99770.'''
         return QueryResult(False, err=error_msg)
 
-    # Parse the html
-    try:
-        r = retry_requests(url)
-        if r.ok is False:
-            return QueryResult(False, err=r.error_msg)
-        return parse_func(r)
-    except Exception as e:
-        traceback.print_exc()
-        return QueryResult(False, err='Error occurs...' + e.__doc__)
+    return parse_func(url)
 
-def parse_sfacg(r):
+def parse_sfacg(url):
+    # Parse the html
+    r = retry_requests(url)
+    if not r.ok:
+        return QueryResult(False, err=r.error_msg)
+
     BASE_URL = 'http://comic.sfacg.com'
     text = r.text
 
@@ -55,7 +52,7 @@ def parse_sfacg(r):
     # Get the image list
     urls_pattern = 'picAy\[\d+\] = "(.*?)"'
     urls = re.findall(urls_pattern, text)
-    urls = [BASE_URL + url for url in urls]
+    urls = [BASE_URL + comic_url for comic_url in urls]
 
     # Get the comic name
     name_pattern = 'comicName = "(.*?)"'
@@ -81,16 +78,29 @@ def parse_sfacg(r):
     }
     return QueryResult(True, data=comic_data)
 
-def parse_8comic(r):
-    text = r.text
-
+def parse_8comic(query_url):
     # Retrive the importent variable
     ch_pattern = 'ch=(\d*)'
-    ch = re.findall(ch_pattern, r.url)[0]
-    item_id_pattern = 'var itemid=(\d*?);'
-    item_id = re.findall(item_id_pattern, text)[0]
-    allcodes_pattern = 'var allcodes="(.*?)";'
-    allcodes  = re.findall(allcodes_pattern, text)[0]
+    ch = re.findall(ch_pattern, query_url)[0]
+
+    if 'url' in session and session['url'] == query_url.split('?')[0]:
+        item_id = session['item_id']
+        allcodes = session['allcodes']
+    else:
+        # Parse the html
+        r = retry_requests(query_url)
+        if not r.ok:
+            return QueryResult(False, err=r.error_msg)
+        text = r.text
+
+        item_id_pattern = 'var itemid=(\d*?);'
+        item_id = re.findall(item_id_pattern, text)[0]
+        allcodes_pattern = 'var allcodes="(.*?)";'
+        allcodes  = re.findall(allcodes_pattern, text)[0]
+
+        session['url'] = query_url.split('?')[0]
+        session['item_id'] = item_id
+        session['allcodes'] = allcodes
 
     # Get the current num and the num list
     nums = []
@@ -114,15 +124,13 @@ def parse_8comic(r):
     # Generate prev/next url
     prev_num = nums[idx-1] if idx > 0 else None
     next_num = nums[idx+1] if idx < len(nums) else None
-    print prev_num, next_num
     pattern = re.compile('ch=\d*')
-    prev_url = pattern.sub('ch={0}'.format(prev_num), r.url) if prev_num else None
-    next_url = pattern.sub('ch={0}'.format(next_num), r.url) if next_num else None
-    print prev_url, next_url
+    prev_url = pattern.sub('ch={0}'.format(prev_num), query_url) if prev_num else None
+    next_url = pattern.sub('ch={0}'.format(next_num), query_url) if next_num else None
 
     comic_data = {
         'urls' : urls,
-        'name' : 'Untitled',
+        'name' : session['url'],#'Untitled',
         'prev_url' : prev_url,
         'next_url' : next_url,
     }
@@ -131,7 +139,12 @@ def parse_8comic(r):
 #   name_pattern = '<title>(.*?)</title>'
 #   name = re.findall(name_pattern, text)[0]
 
-def parse_99770(r):
+def parse_99770(url):
+    # Parse the html
+    r = retry_requests(url)
+    if not r.ok:
+        return QueryResult(False, err=r.error_msg)
+
     BASE_DOMAINS = 'http://58.215.241.39:9728/dm01/|http://58.215.241.39:9728/dm02/|http://58.215.241.39:9728/dm03/|http://58.215.241.206:9728/dm04/|http://58.215.241.39:9728/dm05/|http://58.215.241.39:9728/dm06/|http://58.215.241.39:9728/dm07/|http://58.215.241.39:9728/dm08/|http://58.215.241.206:9728/dm09/|http://58.215.241.39:9728/dm10/|http://58.215.241.39:9728/dm11/|http://58.215.241.206:9728/dm12/|http://58.215.241.39:9728/dm13/|http://173.231.57.238/dm14/|http://58.215.241.206:9728/dm15/|http://142.4.34.102/dm16/'.split('|')
     text = r.text
 
@@ -139,7 +152,7 @@ def parse_99770(r):
     urls = re.findall(urls_pattern, text)[0].split('|')
     spath_pattern = 'var sPath="(\d*)"'
     spath = int(re.findall(spath_pattern, text)[0]) - 1
-    urls = [BASE_DOMAINS[spath] + url for url in urls]
+    urls = [BASE_DOMAINS[spath] + comic_url for comic_url in urls]
 
     comic_data = {
         'urls' : urls,
@@ -170,8 +183,8 @@ class QueryResult():
 
 def main(argv=sys.argv[:]):
 #   url = 'http://comic.sfacg.com/HTML/WDMM/001/'
-#   url = 'http://new.comicvip.com/show/cool-7340.html?ch=23'
-    url = 'http://mh.99770.cc/comic/6643/141228/'
+    url = 'http://new.comicvip.com/show/cool-7340.html?ch=23'
+#   url = 'http://mh.99770.cc/comic/6643/141228/'
     print parse_html(url)
     return 0
 
