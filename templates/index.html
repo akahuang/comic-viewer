@@ -1,16 +1,12 @@
-{% extends "base.html" %}
-{% block body %}
+{% extends "base_with_fixed_footer.html" %}
+{% block main_content %}
     <div class="vertical-center">
         <h1>Comic Viewer</h1>
         <center>
             <form class="pure-form pure-form-stacked" method="GET" action="/result/">
-                <input class="pure-u-3-4" id="query" name="query" type="text" value="" placeholder="Enter URL Here" >
+                <input class="pure-u-3-4" id="query" name="query" type="text" value="{{ query }}" placeholder="Enter URL Here" >
                 <input type="submit" class="pure-button " value="Submit">
             </form>
         </center>
-    </div>
-
-    <div class="banner fixed-foot" id="footer">
-        &copy; Copyright 2014 by flarehunter
     </div>
 {% endblock %}

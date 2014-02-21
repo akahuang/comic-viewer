@@ -1,0 +1,7 @@
+{% macro footer(isfixed) -%}
+    <div class="banner {% if isfixed %}fixed-foot{% endif %}" id="footer">
+        &copy; Copyright 2014 by flarehunter. Powered by <a href="http://flask.pocoo.org/" target="_blank">Flask</a>.<br>
+        <a href="https://github.com/akahuang/comic-viewer" target="_blank">Source code</a> and
+        <a href="https://github.com/akahuang/comic-viewer/blob/master/README.md" target="_blank">Readme</a>.
+    </div>
+{%- endmacro %}
