@@ -116,8 +116,11 @@ class Site8ComicParser(ComicSiteParser):
         super(Site8ComicParser, self).__init__()
 
     def _request_data(self):
-        ch_pattern = 'ch=(\d*)'
-        self.ch = re.findall(ch_pattern, self.query_url)[0]
+        try:
+            ch_pattern = 'ch=(\d*)'
+            self.ch = re.findall(ch_pattern, self.query_url)[0]
+        except:
+            self.ch = -1
 
         if 'url' in session and session['url'] == self.query_url.split('?')[0]:
             self.item_id = session['item_id']
@@ -147,7 +150,7 @@ class Site8ComicParser(ComicSiteParser):
             objs = link.split(' ')
             temp_num = objs[0]
             nums.append(temp_num)
-            if temp_num == self.ch:
+            if temp_num == self.ch or (self.ch == -1 and len(nums) == 1):
                 num, sid, did, pages, code = link.split(' ')
                 idx = len(nums) - 1
 
@@ -160,8 +163,9 @@ class Site8ComicParser(ComicSiteParser):
             self.urls.append(url)
 
         # Generate prev/next url
-        prev_num = nums[idx-1] if idx > 0 else None
-        next_num = nums[idx+1] if idx < len(nums) else None
+        print idx, len(nums)
+        prev_num = nums[idx-1] if idx-1 >= 0 else None
+        next_num = nums[idx+1] if idx+1 <= len(nums)-1 else None
         pattern = re.compile('ch=\d*')
         self.prev_url = pattern.sub('ch={0}'.format(prev_num), self.query_url) if prev_num else None
         self.next_url = pattern.sub('ch={0}'.format(next_num), self.query_url) if next_num else None
